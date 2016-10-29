@@ -41,6 +41,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,11 +54,15 @@
     <Compile Include="BundleExtensions.cs" />
     <Compile Include="CommonJsAsset.cs" />
     <Compile Include="CommonJsConstants.cs" />
+    <Compile Include="CommonJsSettings.cs" />
+    <Compile Include="CommonJsStartup.cs" />
+    <Compile Include="CommonJsStreamWriter.cs" />
     <Compile Include="CommonJsUtility.cs" />
     <Compile Include="ParseModuleReferences.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Cassette.CommonJs.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

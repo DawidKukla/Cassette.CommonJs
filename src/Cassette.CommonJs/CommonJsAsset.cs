@@ -15,83 +15,89 @@ namespace Cassette.CommonJs
     private readonly IEnumerable<IAsset> _children;
     private readonly MemoryStream _stream;
     private readonly byte[] _hash;
-
-    public CommonJsAsset(string path, IEnumerable<IAsset> children)
+    
+    public CommonJsAsset(string path, IEnumerable<IAsset> children, CommonJsStreamWriter writer)
     {
       _path = path;
       _children = children.ToArray();
-
-      _stream = this.CombineAssets(_children);
+      
+      _stream = writer.ToStream(_children);
       _hash = _stream.ComputeSHA1Hash();
     }
 
-    private MemoryStream CombineAssets(IEnumerable<IAsset> assets)
-    {
-      var outputStream = new MemoryStream();
-      var writer = new StreamWriter(outputStream);
-      writer.Write(CommonJsConstants.Prelude);
+    //private MemoryStream CombineAssets(IEnumerable<IAsset> assets)
+    //{
+    //  var outputStream = new MemoryStream();
+    //  var writer = new StreamWriter(outputStream);
+    //  writer.Write(CommonJsConstants.Prelude);
 
-      writer.Write("(this, [");
-      assets.WriteCollection(writer, this.WriteAsset);
-      writer.Write("]);");
+    //  writer.Write("(this, {");
+    //  _settings.Globals.WriteCollection(writer, (w, g) =>
+    //  {
+    //    writer.WriteFormat("'{0}': '{1}'", g.Key, g.Value);
+    //  });
 
-      writer.Flush();
-      outputStream.Position = 0;
-      return outputStream;
-    }
+    //  writer.Write("}, [");
+    //  assets.WriteCollection(writer, this.WriteAsset);
+    //  writer.Write("]);");
 
-    private void WriteAsset(StreamWriter writer, IAsset asset)
-    {
-      writer.Write("{");
-      writer.WriteLine();
-      writer.Write("  path: ");
+    //  writer.Flush();
+    //  outputStream.Position = 0;
+    //  return outputStream;
+    //}
 
-      writer.Write(HttpUtility.JavaScriptStringEncode(asset.Path, true));
-      writer.Write(",");
-      writer.WriteLine();
+    //private void WriteAsset(StreamWriter writer, IAsset asset)
+    //{
+    //  writer.Write("{");
+    //  writer.WriteLine();
+    //  writer.Write("  path: ");
 
-      writer.Write("  body: function (require, module, exports) {{ // start {0}", asset.Path);
-      writer.WriteLine();
+    //  writer.Write(HttpUtility.JavaScriptStringEncode(asset.Path, true));
+    //  writer.Write(",");
+    //  writer.WriteLine();
 
-      using (var reader = new StreamReader(asset.OpenStream()))
-      {
-        string line;
-        while ((line = reader.ReadLine()) != null)
-        {
-          writer.Write(line);
-          writer.WriteLine();
-        }
-      }
+    //  writer.Write("  body: function (require, module, exports) {{ // start {0}", asset.Path);
+    //  writer.WriteLine();
 
-      writer.WriteLine();
-      writer.WriteFormat("  }}, // end {0}", asset.Path);  // end body
-      writer.WriteLine();
+    //  using (var reader = new StreamReader(asset.OpenStream()))
+    //  {
+    //    string line;
+    //    while ((line = reader.ReadLine()) != null)
+    //    {
+    //      writer.Write(line);
+    //      writer.WriteLine();
+    //    }
+    //  }
 
-      if (asset.References.Any())
-      {
-        writer.Write("  refs: {");
-        writer.WriteLine();
+    //  writer.WriteLine();
+    //  writer.WriteFormat("  }}, // end {0}", asset.Path);  // end body
+    //  writer.WriteLine();
 
-        asset.References.WriteCollection(writer, (w, r) =>
-        {
-          var relativePath = CommonJsUtility.ServerPathToCommonJsPath(r.FromAssetPath, r.ToPath);
+    //  if (asset.References.Any())
+    //  {
+    //    writer.Write("  refs: {");
+    //    writer.WriteLine();
 
-          writer.Write("    ");
-          writer.Write(HttpUtility.JavaScriptStringEncode(relativePath, true));
-          writer.Write(": ");
-          writer.Write(HttpUtility.JavaScriptStringEncode(r.ToPath, true));
-        });
+    //    asset.References.WriteCollection(writer, (w, r) =>
+    //    {
+    //      var relativePath = CommonJsUtility.ServerPathToCommonJsPath(r.FromAssetPath, r.ToPath);
 
-        writer.Write("  }"); // end refs
-      }
-      else
-      {
-        writer.Write("  refs: {}");
-      }
+    //      writer.Write("    ");
+    //      writer.Write(HttpUtility.JavaScriptStringEncode(relativePath, true));
+    //      writer.Write(": ");
+    //      writer.Write(HttpUtility.JavaScriptStringEncode(r.ToPath, true));
+    //    });
 
-      writer.WriteLine();
-      writer.Write("}");
-    }
+    //    writer.Write("  }"); // end refs
+    //  }
+    //  else
+    //  {
+    //    writer.Write("  refs: {}");
+    //  }
+
+    //  writer.WriteLine();
+    //  writer.Write("}");
+    //}
 
     public override void Accept(IBundleVisitor visitor)
     {

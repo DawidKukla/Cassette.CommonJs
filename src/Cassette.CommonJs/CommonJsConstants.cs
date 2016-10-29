@@ -8,7 +8,7 @@ namespace Cassette.CommonJs
 {
   internal class CommonJsConstants
   {
-    public const string Prelude = @"(function (global, entries) {
+    public const string Prelude = @"(function (global, globals, entries) {
   var originalRequire = typeof require === 'function' && require;
   var modules = {};
 
@@ -34,6 +34,11 @@ namespace Cassette.CommonJs
 
   function localRequire (localMap, path)
   {
+    if (globals && path in globals)
+    {
+      return global[globals[path]];
+    }
+
     if (path[path.length - 1] === '/')
     {
       path += 'index';
@@ -53,11 +58,6 @@ namespace Cassette.CommonJs
     if (entry)
     {
       return loadModule(entry);
-    }
-
-    if (path in global)
-    {
-      return global[path];
     }
 
     if (originalRequire)
