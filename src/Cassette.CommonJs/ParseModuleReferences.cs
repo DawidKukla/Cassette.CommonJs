@@ -1,4 +1,5 @@
-﻿using Cassette.BundleProcessing;
+﻿using System.Linq;
+using Cassette.BundleProcessing;
 using Cassette.Scripts;
 using Cassette.Utilities;
 using Microsoft.Ajax.Utilities;
@@ -82,7 +83,7 @@ namespace Cassette.CommonJs
 
               _asset.AddReference(path, 0);
             }
-            else if (_settings.Globals.ContainsKey(path) == false)
+            else if (this.ShouldIncludeReference(path))
             {
               var mainFile = _moduleResolver.Resolve(path);
               _bundle.Assets.Add(new ExternalModuleAsset(path, mainFile, _bundle));
@@ -93,6 +94,17 @@ namespace Cassette.CommonJs
         }
 
         base.Visit(node);
+      }
+
+      private bool ShouldIncludeReference(string path)
+      {
+        if (_settings.Globals.ContainsKey(path))
+        {
+          return false;
+        }
+
+        // make sure it is not already included
+        return _bundle.Assets.OfType<ExternalModuleAsset>().Any(x => x.ModuleName == path) == false;
       }
     }
   }
