@@ -1,41 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace Cassette.CommonJs
 {
-  public class CommonJsStreamWriter
+  public class CommonJsWriter
   {
     private readonly CommonJsSettings _settings;
 
-    public CommonJsStreamWriter(CommonJsSettings settings)
+    public CommonJsWriter(CommonJsSettings settings)
     {
       _settings = settings;
     }
 
-    public MemoryStream ToStream(IEnumerable<IAsset> assets)
+    public void WriteToStream(Stream stream, IEnumerable<IAsset> assets)
     {
-      var outputStream = new MemoryStream();
-      var writer = new StreamWriter(outputStream);
-      writer.Write(CommonJsConstants.Prelude);
+      var writer = new StreamWriter(stream);
+      writer.Write(Constants.Prelude);
 
       writer.Write("(this, {");
-      _settings.Globals.WriteCollection(writer, (w, g) =>
-      {
-        writer.WriteFormat("'{0}': '{1}'", g.Key, g.Value);
-      });
+      _settings.Globals.WriteCollection(writer, (w, g) => writer.WriteFormat("\"{0}\": \"{1}\"", g.Key, g.Value));
 
       writer.Write("}, [");
       assets.WriteCollection(writer, this.WriteAsset);
       writer.Write("]);");
 
       writer.Flush();
-      outputStream.Position = 0;
-      return outputStream;
+      stream.Position = 0;
     }
 
     private void WriteAsset(StreamWriter writer, IAsset asset)
@@ -44,7 +36,14 @@ namespace Cassette.CommonJs
       writer.WriteLine();
       writer.Write("  path: ");
 
-      writer.Write(HttpUtility.JavaScriptStringEncode(asset.Path, true));
+      string path = asset.Path;
+      var externalAsset = asset as ExternalModuleAsset;
+      if (externalAsset != null)
+      {
+        path = externalAsset.ModuleName;
+      }
+
+      writer.Write(HttpUtility.JavaScriptStringEncode(path, true));
       writer.Write(",");
       writer.WriteLine();
 
@@ -72,7 +71,7 @@ namespace Cassette.CommonJs
 
         asset.References.WriteCollection(writer, (w, r) =>
         {
-          var relativePath = CommonJsUtility.ServerPathToCommonJsPath(r.FromAssetPath, r.ToPath);
+          var relativePath = FileUtility.ServerPathToCommonJsPath(r.FromAssetPath, r.ToPath);
 
           writer.Write("    ");
           writer.Write(HttpUtility.JavaScriptStringEncode(relativePath, true));

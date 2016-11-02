@@ -1,16 +1,17 @@
 ﻿using Cassette.BundleProcessing;
 using Cassette.Scripts;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cassette.CommonJs
 {
   public static class BundleExtensions
   {
+    /// <summary>
+    /// Alters the pipeline to process the bundled files as CommonJS. This will replace the reference
+    /// parsing to use "require" references instead of the XML comment references, and will always
+    /// combine the bundle into a single file.
+    /// </summary>
+    /// <param name="this">The script bundle.</param>
     public static void AlterPipelineForCommonJs(this ScriptBundle @this)
     {
       // keep minifier
@@ -30,27 +31,6 @@ namespace Cassette.CommonJs
       {
         @this.Pipeline.Add(minifier);
       }
-    }
-
-    internal static void WriteCollection<T>(this IEnumerable<T> @this, StreamWriter writer, Action<StreamWriter, T> writerFunc)
-    {
-      bool isFirst = true;
-      foreach (var item in @this)
-      {
-        if (isFirst == false)
-        {
-          writer.Write(",");
-          writer.WriteLine();
-        }
-
-        writerFunc(writer, item);
-        isFirst = false;
-      }
-    }
-
-    internal static void WriteFormat(this StreamWriter @this, string format, params object[] args)
-    {
-      @this.Write(string.Format(format, args));
     }
   }
 }

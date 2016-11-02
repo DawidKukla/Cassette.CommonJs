@@ -1,18 +1,13 @@
 ﻿using Cassette.BundleProcessing;
 using Cassette.Scripts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cassette.CommonJs
 {
   public class BundleCommonJs : IBundleProcessor<ScriptBundle>
   {
-    private readonly CommonJsStreamWriter _writer;
+    private readonly CommonJsWriter _writer;
 
-    public BundleCommonJs(CommonJsStreamWriter writer)
+    public BundleCommonJs(CommonJsWriter writer)
     {
       _writer = writer;
     }

@@ -1,35 +1,34 @@
 ﻿using Cassette.BundleProcessing;
-using Cassette.IO;
 using Cassette.Scripts;
 using Cassette.Utilities;
 using Microsoft.Ajax.Utilities;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Script.Serialization;
 
 namespace Cassette.CommonJs
 {
   public class ParseModuleReferences : IBundleProcessor<ScriptBundle>
   {
     private readonly CommonJsSettings _settings;
-    private readonly CassetteSettings _cassetteSettings;
+    private readonly IExternalModuleResolver _moduleResolver;
 
-    public ParseModuleReferences(CommonJsSettings settings, CassetteSettings cassetteSettings)
+    public ParseModuleReferences(CommonJsSettings settings, IExternalModuleResolver moduleResolver)
     {
       _settings = settings;
-      _cassetteSettings = cassetteSettings;
+      _moduleResolver = moduleResolver;
     }
 
     public void Process(ScriptBundle bundle)
     {
-      foreach (var asset in bundle.Assets.Where(this.ShouldParse))
+      for (var i = 0; i < bundle.Assets.Count; i++)
       {
+        var asset = bundle.Assets[i];
+        if (this.ShouldParse(asset) == false)
+        {
+          continue;
+        }
+
         var source = asset.OpenStream().ReadToEnd();
-        var referenceParser = new RequireReferenceParser(asset, _settings, _cassetteSettings);
+        var referenceParser = new RequireReferenceParser(asset, bundle, _settings, _moduleResolver);
         var parser = new JSParser(source);
         var tree = parser.Parse(new CodeSettings());
         tree.Accept(referenceParser);
@@ -44,15 +43,16 @@ namespace Cassette.CommonJs
     internal class RequireReferenceParser : TreeVisitor
     {
       private readonly IAsset _asset;
+      private readonly ScriptBundle _bundle;
       private readonly CommonJsSettings _settings;
-      private readonly CassetteSettings _cassetteSettings;
-      private IDirectory _nodeDirectory;
+      private readonly IExternalModuleResolver _moduleResolver;
 
-      public RequireReferenceParser(IAsset asset, CommonJsSettings settings, CassetteSettings cassetteSettings)
+      public RequireReferenceParser(IAsset asset, ScriptBundle bundle, CommonJsSettings settings, IExternalModuleResolver moduleResolver)
       {
         _asset = asset;
+        _bundle = bundle;
         _settings = settings;
-        _cassetteSettings = cassetteSettings;
+        _moduleResolver = moduleResolver;
       }
 
       public override void Visit(CallNode node)
@@ -63,14 +63,14 @@ namespace Cassette.CommonJs
           if (constWrapper != null && constWrapper.PrimitiveType == PrimitiveType.String)
           {
             var path = (string)constWrapper.Value;
-            if (CommonJsUtility.IsRelativePath(path))
+            if (FileUtility.IsRelativePath(path))
             {
               if (path.StartsWith("./", StringComparison.Ordinal))
               {
                 path = path.Length == 2 ? string.Empty : path.Substring(2);
               }
 
-              if (path.EndsWith("/"))
+              if (path.EndsWith("/", StringComparison.Ordinal))
               {
                 path += "index.js";
               }
@@ -84,17 +84,8 @@ namespace Cassette.CommonJs
             }
             else if (_settings.Globals.ContainsKey(path) == false)
             {
-              _nodeDirectory = _nodeDirectory ?? _cassetteSettings.SourceDirectory.GetDirectory(_settings.NodeModulesPath);
-
-              var moduleDirectory = _nodeDirectory.GetDirectory(path);
-              var packageJson = moduleDirectory.GetFile("package.json");
-              var jsonString = packageJson.OpenRead().ReadToEnd();
-              var serializer = new JavaScriptSerializer();
-              var json = serializer.Deserialize<Dictionary<string, object>>(jsonString);
-              var mainFile = (string)json["main"];
-              var mainPath = Path.Combine(moduleDirectory.FullPath, mainFile);
-
-              _asset.AddReference(mainPath, 0);
+              var mainFile = _moduleResolver.Resolve(path);
+              _bundle.Assets.Add(new ExternalModuleAsset(path, mainFile, _bundle));
             }
           }
 

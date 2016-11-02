@@ -1,37 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cassette.CommonJs
 {
-  public static class CommonJsUtility
+  internal static class FileUtility
   {
-    private static void ValidateServerPath(string path)
+    private static string NormalizeServerPath(string path)
     {
       if (path.StartsWith("~/", StringComparison.Ordinal) == false)
       {
         throw new ArgumentException("Expected a rooted path", "path");
       }
+
+      return path.Length == 2 ? string.Empty : path.Substring(2);
     }
 
-    public static string ServerPathToCommonJsPath(string fromPath, string toPath)
+    internal static string ServerPathToCommonJsPath(string fromPath, string toPath)
     {
-      CommonJsUtility.ValidateServerPath(fromPath);
-      CommonJsUtility.ValidateServerPath(toPath);
-
       // hack to allow us to leverage Uri to get a relative path
-      fromPath = "c:/" + (fromPath.Length == 2 ? string.Empty : fromPath.Substring(2));
-      toPath = "c:/" + (toPath.Length == 2 ? string.Empty : toPath.Substring(2));
+      fromPath = "c:/" + FileUtility.NormalizeServerPath(fromPath);
+      toPath = "c:/" + FileUtility.NormalizeServerPath(toPath);
 
       var fromUri = new Uri(fromPath, UriKind.Absolute);
       var toUri = new Uri(toPath, UriKind.Absolute);
-
-      if (fromUri.Scheme != toUri.Scheme)
-      {
-        return toUri.ToString();
-      }
 
       var relativeUri = fromUri.MakeRelativeUri(toUri);
       var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
@@ -42,7 +32,7 @@ namespace Cassette.CommonJs
       }
 
       relativePath.Replace('\\', '/');
-      if (CommonJsUtility.IsRelativePath(relativePath) == false)
+      if (FileUtility.IsRelativePath(relativePath) == false)
       {
         // this would indicate the files are in the same directory
         return "./" + relativePath;
