@@ -10,7 +10,10 @@
     <projectUrl>https://github.com/jrsearles/Cassette.CommonJs</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <releaseNotes>
+      Version 1.0.0
+      * Initial release
+    </releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>web javascript cassette plugin commonjs bundling asp.net</tags>
     <dependencies>
