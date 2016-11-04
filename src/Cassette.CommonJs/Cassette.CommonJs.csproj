@@ -11,7 +11,7 @@
     <AssemblyName>Cassette.CommonJs</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -54,13 +54,14 @@
     <Compile Include="BundleCommonJs.cs" />
     <Compile Include="BundleExtensions.cs" />
     <Compile Include="CommonJsAsset.cs" />
-    <Compile Include="Constants.cs" />
     <Compile Include="CommonJsSettings.cs" />
     <Compile Include="CommonJsConfiguration.cs" />
     <Compile Include="CommonJsWriter.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="FileUtility.cs" />
     <Compile Include="ExternalModuleAsset.cs" />
     <Compile Include="ExternalModuleResolver.cs" />
+    <Compile Include="ICommonJsWriter.cs" />
     <Compile Include="IExternalModuleResolver.cs" />
     <Compile Include="ModuleResolutionException.cs" />
     <Compile Include="ParseModuleReferences.cs" />

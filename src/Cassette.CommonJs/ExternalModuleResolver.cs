@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
 using Cassette.IO;
 using Cassette.Utilities;
+using Newtonsoft.Json;
 
 namespace Cassette.CommonJs
 {
@@ -39,8 +39,7 @@ namespace Cassette.CommonJs
       }
 
       var jsonString = packageJson.OpenRead().ReadToEnd();
-      var serializer = new JavaScriptSerializer();
-      var json = serializer.Deserialize<Dictionary<string, object>>(jsonString);
+      var json = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
 
       if (json.ContainsKey("main") == false || string.IsNullOrEmpty((string)json["main"]))
       {

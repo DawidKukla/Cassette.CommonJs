@@ -2,7 +2,7 @@
 {
   internal class Constants
   {
-    public const string Prelude = @"(function (global, globals, entries) {
+    public const string RequireShim = @"(function (global, globals, entries) {
   var originalRequire = typeof require === 'function' && require;
   var modules = {};
 
@@ -57,6 +57,8 @@
       loadModule(entry);
     }
   });
+
+  return localRequire.bind(global, {});
 })";
   }
 }

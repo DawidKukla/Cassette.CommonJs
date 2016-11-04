@@ -5,9 +5,9 @@ namespace Cassette.CommonJs
 {
   public class BundleCommonJs : IBundleProcessor<ScriptBundle>
   {
-    private readonly CommonJsWriter _writer;
+    private readonly ICommonJsWriter _writer;
 
-    public BundleCommonJs(CommonJsWriter writer)
+    public BundleCommonJs(ICommonJsWriter writer)
     {
       _writer = writer;
     }

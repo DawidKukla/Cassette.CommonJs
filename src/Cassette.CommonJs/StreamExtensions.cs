@@ -26,5 +26,10 @@ namespace Cassette.CommonJs
     {
       @this.Write(String.Format(format, args));
     }
+
+    internal static void JavaScriptStringEncodeQuoted(this StreamWriter @this, string value)
+    {
+      @this.Write("\"" + value.Replace(@"\", @"\\") + "\"");
+    }
   }
 }

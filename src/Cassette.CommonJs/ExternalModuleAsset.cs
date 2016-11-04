@@ -2,7 +2,7 @@
 
 namespace Cassette.CommonJs
 {
-  public class ExternalModuleAsset : FileAsset
+  internal class ExternalModuleAsset : FileAsset
   {
     public ExternalModuleAsset(string moduleName, IFile sourceFile, Bundle parentBundle) : base(sourceFile, parentBundle)
     {

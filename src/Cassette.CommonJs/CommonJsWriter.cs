@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 
 namespace Cassette.CommonJs
 {
-  public class CommonJsWriter
+  public class CommonJsWriter : ICommonJsWriter
   {
     private readonly CommonJsSettings _settings;
 
@@ -17,7 +16,8 @@ namespace Cassette.CommonJs
     public void WriteToStream(Stream stream, IEnumerable<IAsset> assets)
     {
       var writer = new StreamWriter(stream);
-      writer.Write(Constants.Prelude);
+      writer.Write("var require = ");
+      writer.Write(Constants.RequireShim);
 
       writer.Write("(this, {");
       _settings.Globals.WriteCollection(writer, (w, g) => writer.WriteFormat("\"{0}\": \"{1}\"", g.Key, g.Value));
@@ -43,7 +43,7 @@ namespace Cassette.CommonJs
         path = externalAsset.ModuleName;
       }
 
-      writer.Write(HttpUtility.JavaScriptStringEncode(path, true));
+      writer.JavaScriptStringEncodeQuoted(path);
       writer.Write(",");
       writer.WriteLine();
 
@@ -74,9 +74,9 @@ namespace Cassette.CommonJs
           var relativePath = FileUtility.ServerPathToCommonJsPath(r.FromAssetPath, r.ToPath);
 
           writer.Write("    ");
-          writer.Write(HttpUtility.JavaScriptStringEncode(relativePath, true));
+          writer.JavaScriptStringEncodeQuoted(relativePath);
           writer.Write(": ");
-          writer.Write(HttpUtility.JavaScriptStringEncode(r.ToPath, true));
+          writer.JavaScriptStringEncodeQuoted(r.ToPath);
         });
 
         writer.Write("  }"); // end refs

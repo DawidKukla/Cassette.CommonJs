@@ -11,6 +11,11 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
+      Version 1.0.1
+      * Update to same .Net 4 Client Profile version used by Cassette
+      * Add dependency to Json.Net
+      * Replace global require with shim
+      
       Version 1.0.0
       * Initial release
     </releaseNotes>
@@ -19,6 +24,7 @@
     <dependencies>
       <dependency id="AjaxMin" version="[4,5)" />
       <dependency id="Cassette" version="[2,3)" />
+      <dependency id="Newtonsoft.Json" version="6.0.0" />
     </dependencies>
   </metadata>
 </package>

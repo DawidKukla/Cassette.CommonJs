@@ -8,6 +8,7 @@ namespace Cassette.CommonJs
     {
       container.Register<CommonJsSettings>().AsSingleton();
       container.Register<IExternalModuleResolver, ExternalModuleResolver>().AsSingleton();
+      container.Register<ICommonJsWriter, CommonJsWriter>();
     }
   }
 }

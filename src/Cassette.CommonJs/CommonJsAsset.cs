@@ -6,14 +6,14 @@ using System.Linq;
 
 namespace Cassette.CommonJs
 {
-  public class CommonJsAsset : AssetBase, IDisposable
+  internal class CommonJsAsset : AssetBase, IDisposable
   {
     private readonly string _path;
     private readonly IEnumerable<IAsset> _children;
     private readonly MemoryStream _stream;
     private readonly byte[] _hash;
     
-    public CommonJsAsset(string path, IEnumerable<IAsset> children, CommonJsWriter writer)
+    internal CommonJsAsset(string path, IEnumerable<IAsset> children, ICommonJsWriter writer)
     {
       _path = path;
       _children = children.ToArray();
