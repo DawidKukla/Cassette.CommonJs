@@ -64,28 +64,21 @@ namespace Cassette.CommonJs
       writer.WriteFormat("  }}, // end {0}", asset.Path);  // end body
       writer.WriteLine();
 
-      if (asset.References.Any())
+      writer.Write("  refs: {");
+      writer.WriteLine();
+
+      asset.References.WriteCollection(writer, (w, r) =>
       {
-        writer.Write("  refs: {");
-        writer.WriteLine();
+        var relativePath = FileUtility.ServerPathToCommonJsPath(r.FromAssetPath, r.ToPath);
 
-        asset.References.WriteCollection(writer, (w, r) =>
-        {
-          var relativePath = FileUtility.ServerPathToCommonJsPath(r.FromAssetPath, r.ToPath);
+        writer.Write("    ");
+        writer.JavaScriptStringEncodeQuoted(relativePath);
+        writer.Write(": ");
+        writer.JavaScriptStringEncodeQuoted(r.ToPath);
+      });
 
-          writer.Write("    ");
-          writer.JavaScriptStringEncodeQuoted(relativePath);
-          writer.Write(": ");
-          writer.JavaScriptStringEncodeQuoted(r.ToPath);
-        });
-
-        writer.Write("  }"); // end refs
-      }
-      else
-      {
-        writer.Write("  refs: {}");
-      }
-
+      writer.Write("  }"); // end refs
+      
       writer.WriteLine();
       writer.Write("}");
     }

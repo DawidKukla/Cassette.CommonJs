@@ -8,7 +8,7 @@
 
   function loadModule (entry) {
     var m = { exports: {} };
-    entry.body(localRequire.bind(m.exports, entry.refs), m, m.exports);
+    entry.body(localRequire.bind(global, entry.refs), m, m.exports);
     return (modules[entry.path] = m.exports);
   }
 

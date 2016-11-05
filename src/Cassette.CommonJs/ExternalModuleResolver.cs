@@ -29,13 +29,13 @@ namespace Cassette.CommonJs
       var moduleDirectory = _nodeDirectory.GetDirectory(moduleName);
       if (moduleDirectory.Exists == false)
       {
-        throw new ModuleResolutionException("Unable to find module in node_modules directory.", moduleName);
+        throw new ModuleResolutionException(string.Format("Unable to find module {0} in node_modules directory.", moduleName), moduleName);
       }
 
       var packageJson = moduleDirectory.GetFile("package.json");
       if (packageJson.Exists == false)
       {
-        throw new ModuleResolutionException("Unable to find package.json file for module.", moduleName);
+        throw new ModuleResolutionException(string.Format("Unable to find package.json file for module {0}.", moduleName), moduleName);
       }
 
       var jsonString = packageJson.OpenRead().ReadToEnd();
@@ -43,7 +43,7 @@ namespace Cassette.CommonJs
 
       if (json.ContainsKey("main") == false || string.IsNullOrEmpty((string)json["main"]))
       {
-        throw new ModuleResolutionException("No main entry found in package.json.", moduleName);
+        throw new ModuleResolutionException(string.Format("No main entry found in package.json.", moduleName), moduleName);
       }
 
       var mainPath = (string)json["main"];

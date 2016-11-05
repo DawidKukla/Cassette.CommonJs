@@ -1,5 +1,6 @@
 ﻿using Cassette.BundleProcessing;
 using Cassette.Scripts;
+using System.Linq;
 
 namespace Cassette.CommonJs
 {
@@ -14,9 +15,12 @@ namespace Cassette.CommonJs
 
     public void Process(ScriptBundle bundle)
     {
-      var combined = new CommonJsAsset(bundle.Path, bundle.Assets, _writer);
-      bundle.Assets.Clear();
-      bundle.Assets.Add(combined);
+      if (bundle.Assets.OfType<IModuleAsset>().Any())
+      {
+        var combined = new CommonJsAsset(bundle.Path, bundle.Assets, _writer);
+        bundle.Assets.Clear();
+        bundle.Assets.Add(combined);
+      }
     }
   }
 }

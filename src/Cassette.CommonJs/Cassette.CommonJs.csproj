@@ -39,6 +39,10 @@
       <HintPath>..\packages\Cassette.2.4.2\lib\net40-client\Cassette.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -52,8 +56,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BundleCommonJs.cs" />
-    <Compile Include="BundleExtensions.cs" />
     <Compile Include="CommonJsAsset.cs" />
+    <Compile Include="CommonJsPipelineModifier.cs" />
     <Compile Include="CommonJsSettings.cs" />
     <Compile Include="CommonJsConfiguration.cs" />
     <Compile Include="CommonJsWriter.cs" />
@@ -63,13 +67,17 @@
     <Compile Include="ExternalModuleResolver.cs" />
     <Compile Include="ICommonJsWriter.cs" />
     <Compile Include="IExternalModuleResolver.cs" />
+    <Compile Include="IModuleAsset.cs" />
+    <Compile Include="ModuleAsset.cs" />
     <Compile Include="ModuleResolutionException.cs" />
     <Compile Include="ParseModuleReferences.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StreamExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Cassette.CommonJs.nuspec" />
+    <None Include="Cassette.CommonJs.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
