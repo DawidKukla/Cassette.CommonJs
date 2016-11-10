@@ -49,7 +49,7 @@ namespace Cassette.CommonJs
       private readonly CommonJsSettings _settings;
       private readonly IExternalModuleResolver _moduleResolver;
       private readonly IAsset _asset;
-      private ModuleAsset _moduleAsset = null;
+      private IModuleAsset _moduleAsset = null;
 
       public RequireReferenceParser(IAsset asset, ScriptBundle bundle, CommonJsSettings settings, IExternalModuleResolver moduleResolver)
       {
@@ -57,6 +57,7 @@ namespace Cassette.CommonJs
         _bundle = bundle;
         _settings = settings;
         _moduleResolver = moduleResolver;
+        _moduleAsset = _asset as IModuleAsset;
       }
 
       public IAsset Asset
@@ -71,15 +72,9 @@ namespace Cassette.CommonJs
       {
         // if the file has no dependencies it might end up here
         // all we care about is whether it has any exports
-        if (_moduleAsset != null)
-        {
-          return;
-        }
-
-        if (node.IsAssign && this.IsExportMember(node.Operand1))
+        if (_moduleAsset == null && node.IsAssign && this.IsExportMember(node.Operand1))
         {
           _moduleAsset = new ModuleAsset(_asset);
-          return;
         }
 
         base.Visit(node);
@@ -94,7 +89,7 @@ namespace Cassette.CommonJs
           {
             _moduleAsset = _moduleAsset ?? new ModuleAsset(_asset);
             var path = (string)constWrapper.Value;
-
+            
             if (FileUtility.IsRelativePath(path))
             {
               if (path.StartsWith("./", StringComparison.Ordinal))
