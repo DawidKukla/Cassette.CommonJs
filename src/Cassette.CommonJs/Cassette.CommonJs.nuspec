@@ -11,16 +11,19 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
-      Version 1.0.2
-      * Update Cassette dependency to 2.4
-     
-      Version 1.0.1
-      * Update to same .Net 4 Client Profile version used by Cassette
-      * Add dependency to Json.Net
-      * Replace global require with shim
+Version 1.0.4
+- Fix for external references.
       
-      Version 1.0.0
-      * Initial release
+Version 1.0.2
+- Update Cassette dependency to 2.4
+     
+Version 1.0.1
+- Update to same .Net 4 Client Profile version used by Cassette
+- Add dependency to Json.Net
+- Replace global require with shim
+      
+Version 1.0.0
+- Initial release
     </releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>web javascript cassette plugin commonjs bundling asp.net</tags>
