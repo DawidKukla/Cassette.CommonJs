@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Cassette.Utilities;
 
 namespace Cassette.CommonJs
 {
@@ -15,9 +16,11 @@ namespace Cassette.CommonJs
 
     public void WriteToStream(Stream stream, IEnumerable<IAsset> assets)
     {
+      var requireShim = this.GetType().Assembly.GetManifestResourceStream("Cassette.CommonJs.Resources.require-shim.js").ReadToEnd();
+
       var writer = new StreamWriter(stream);
       writer.Write("var require = ");
-      writer.Write(Constants.RequireShim);
+      writer.Write(requireShim);
 
       writer.Write("(this, {");
       _settings.Globals.WriteCollection(writer, (w, g) => writer.WriteFormat("\"{0}\": \"{1}\"", g.Key, g.Value));

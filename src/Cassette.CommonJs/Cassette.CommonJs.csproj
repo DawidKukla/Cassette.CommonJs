@@ -61,7 +61,6 @@
     <Compile Include="CommonJsSettings.cs" />
     <Compile Include="CommonJsConfiguration.cs" />
     <Compile Include="CommonJsWriter.cs" />
-    <Compile Include="Constants.cs" />
     <Compile Include="FileUtility.cs" />
     <Compile Include="ExternalModuleAsset.cs" />
     <Compile Include="ExternalModuleResolver.cs" />
@@ -79,6 +78,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\require-shim.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

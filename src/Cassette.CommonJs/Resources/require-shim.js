@@ -1,18 +1,14 @@
-﻿namespace Cassette.CommonJs
-{
-  internal class Constants
-  {
-    public const string RequireShim = @"(function (global, globals, entries) {
+﻿(function (global, globals, entries) {
   var originalRequire = typeof require === 'function' && require;
   var modules = {};
 
-  function loadModule (entry) {
+  function loadModule(entry) {
     var m = { exports: {} };
     entry.body(localRequire.bind(global, entry.refs), m, m.exports);
     return (modules[entry.path] = m.exports);
   }
 
-  function findEntry (path) {
+  function findEntry(path) {
     for (var i = 0, ln = entries.length; i < ln; i++) {
       if (path === entries[i].path) {
         return entries[i];
@@ -22,7 +18,7 @@
     return null;
   }
 
-  function localRequire (refs, path) {
+  function localRequire(refs, path) {
     if (globals && path in globals) {
       return global[globals[path]];
     }
@@ -59,6 +55,4 @@
   });
 
   return localRequire.bind(global, {});
-})";
-  }
-}
+})
