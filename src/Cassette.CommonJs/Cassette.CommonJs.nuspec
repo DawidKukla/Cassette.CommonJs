@@ -11,6 +11,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
+Version 1.0.5
+- Remove concat processor from pipeline, replace with CommonJS wrapper (which will call default if no CommonJS in bundle)
+
 Version 1.0.4
 - Fix for external references.
       

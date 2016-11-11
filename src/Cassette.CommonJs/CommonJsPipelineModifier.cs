@@ -10,6 +10,13 @@ namespace Cassette.CommonJs
       var index = pipeline.IndexOf<SortAssetsByDependency>();
       pipeline.Insert<ParseModuleReferences>(++index);
       pipeline.Insert<BundleCommonJs>(++index);
+
+      index = pipeline.IndexOf<ConcatenateAssets>();
+      if (index > -1)
+      {
+        pipeline.RemoveAt(index);
+      }
+
       return pipeline;
     }
   }
